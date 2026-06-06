@@ -30,6 +30,7 @@ import Table from '../components/common/Table.jsx';
 import Spinner from '../components/common/Spinner.jsx';
 import Button from '../components/common/Button.jsx';
 import { showToast } from '../components/common/Toast.jsx';
+import Modal from '../components/common/Modal.jsx';
 
 const COLORS = ['#0F172A', '#F59E0B', '#10B981', '#EF4444', '#64748B'];
 
@@ -317,7 +318,7 @@ export default function Dashboard() {
         isOpen={showRoleAlert}
         onClose={() => setShowRoleAlert(false)}
         title="Google Auth — Role Notice"
-        style={{ maxWidth: '480px' }}
+        maxWidth="480px"
       >
         <div style={{ textAlign: 'center', padding: '8px 0' }}>
           <div 
