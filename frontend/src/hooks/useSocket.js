@@ -12,8 +12,8 @@ export function useSocket(userId) {
   useEffect(() => {
     if (!userId) return;
 
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-    const socketUrl = apiUrl.replace(/\/api$/, ''); // Get base URL
+    const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3000/api' : '/api');
+    const socketUrl = apiUrl.replace(/\/api$/, '') || '/'; // Get base URL or relative root
 
     socket = io(socketUrl, {
       withCredentials: true,

@@ -43,7 +43,7 @@ export default function Login() {
   };
 
   const handleGoogle = () => {
-    const api = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+    const api = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3000/api' : '/api');
     window.location.href = `${api.replace(/\/api$/, '')}/api/auth/google`;
   };
 

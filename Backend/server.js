@@ -1,6 +1,11 @@
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -99,10 +104,8 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-// Base Route
-app.get('/', (req, res) => {
-  res.json({ message: 'VendorBridge Procurement ERP API is running...' });
-});
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 // API Routes Mounting
 app.use('/api/auth', authRoutes);
@@ -116,6 +119,14 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/activity', activityRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/chat', chatRoutes);
+
+// Wildcard route to serve React app for SPA routing (excluding /api routes)
+app.get(/.*/, (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
 
 // Global Error Handler (must be mounted last)
 app.use(errorHandler);
