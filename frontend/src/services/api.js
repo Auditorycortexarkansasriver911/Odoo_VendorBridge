@@ -86,4 +86,16 @@ api.interceptors.response.use(
   }
 );
 
+export const uploadFile = async (file, folder = '/') => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('folder', folder);
+  const response = await api.post('/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data.data; // returns { url, fileId, name }
+};
+
 export default api;

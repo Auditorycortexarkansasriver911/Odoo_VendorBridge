@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { IKContext, IKUpload } from 'imagekitio-react';
 import { register as registerApi, verifyOtp as verifyOtpApi } from '../../services/authApi.js';
 import { setCredentials } from '../../store/authSlice.js';
-import api from '../../services/api.js';
+import api, { uploadFile } from '../../services/api.js';
 import Input from '../../components/common/Input.jsx';
 import Select from '../../components/common/Select.jsx';
 import Button from '../../components/common/Button.jsx';
@@ -129,43 +128,40 @@ export default function Register() {
               )}
             </div>
             
-            <IKContext
-              publicKey={import.meta.env.VITE_IK_PUBLIC_KEY || 'developer-placeholder-public-key'}
-              urlEndpoint={import.meta.env.VITE_IK_URL_ENDPOINT || 'https://ik.imagekit.io/developer-placeholder-endpoint'}
-              authenticator={async () => {
-                const res = await api.get('/upload/auth');
-                return res.data.data;
+            <label 
+              style={{ 
+                fontSize: '12px', 
+                color: 'var(--accent-color)', 
+                fontWeight: 600, 
+                cursor: uploading ? 'not-allowed' : 'pointer',
+                border: '1px solid var(--border-color)',
+                padding: '6px 12px',
+                borderRadius: '4px',
+                backgroundColor: '#FFFFFF'
               }}
             >
-              <label 
-                style={{ 
-                  fontSize: '12px', 
-                  color: 'var(--accent-color)', 
-                  fontWeight: 600, 
-                  cursor: uploading ? 'not-allowed' : 'pointer',
-                  border: '1px solid var(--border-color)',
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  backgroundColor: '#FFFFFF'
-                }}
-              >
-                {uploading ? 'Uploading...' : 'Upload Picture'}
-                <IKUpload
-                  folder="/avatars"
-                  style={{ display: 'none' }}
-                  onUploadStart={() => setUploading(true)}
-                  onSuccess={(res) => {
+              {uploading ? 'Uploading...' : 'Upload Picture'}
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                disabled={uploading}
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  setUploading(true);
+                  try {
+                    const res = await uploadFile(file, '/avatars');
                     setAvatar({ url: res.url, fileId: res.fileId, name: res.name });
-                    setUploading(false);
                     showToast('Picture uploaded successfully');
-                  }}
-                  onError={(err) => {
-                    setUploading(false);
+                  } catch (err) {
                     showToast('Upload failed', 'error');
-                  }}
-                />
-              </label>
-            </IKContext>
+                  } finally {
+                    setUploading(false);
+                  }
+                }}
+              />
+            </label>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>

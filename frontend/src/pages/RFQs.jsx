@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { IKContext, IKUpload } from 'imagekitio-react';
+
 import { 
   Plus, 
   Search, 
@@ -20,7 +20,7 @@ import {
 
 import { listRfqs, createRfq } from '../services/rfqApi.js';
 import { listVendors } from '../services/vendorApi.js';
-import api from '../services/api.js';
+import api, { uploadFile } from '../services/api.js';
 import Card from '../components/common/Card.jsx';
 import Table from '../components/common/Table.jsx';
 import Badge from '../components/common/Badge.jsx';
@@ -497,44 +497,40 @@ export default function RFQs() {
                   ))}
                 </div>
 
-                <IKContext
-                  publicKey={import.meta.env.VITE_IK_PUBLIC_KEY || 'developer-placeholder-public-key'}
-                  urlEndpoint={import.meta.env.VITE_IK_URL_ENDPOINT || 'https://ik.imagekit.io/developer-placeholder-endpoint'}
-                  authenticator={async () => {
-                    const res = await api.get('/upload/auth');
-                    return res.data.data;
+                <label 
+                  className="btn btn-secondary" 
+                  style={{ 
+                    width: '100%',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    padding: '10px',
+                    cursor: uploadingFile ? 'not-allowed' : 'pointer',
+                    fontSize: '13px'
                   }}
                 >
-                  <label 
-                    className="btn btn-secondary" 
-                    style={{ 
-                      width: '100%',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      padding: '10px',
-                      cursor: uploadingFile ? 'not-allowed' : 'pointer',
-                      fontSize: '13px'
-                    }}
-                  >
-                    <Upload size={14} /> {uploadingFile ? 'Uploading specs...' : 'Upload RFQ Specs Document'}
-                    <IKUpload
-                      folder="/rfq-attachments"
-                      style={{ display: 'none' }}
-                      onUploadStart={() => setUploadingFile(true)}
-                      onSuccess={(res) => {
+                  <Upload size={14} /> {uploadingFile ? 'Uploading specs...' : 'Upload RFQ Specs Document'}
+                  <input
+                    type="file"
+                    style={{ display: 'none' }}
+                    disabled={uploadingFile}
+                    onChange={async (e) => {
+                      const file = e.target.files[0];
+                      if (!file) return;
+                      setUploadingFile(true);
+                      try {
+                        const res = await uploadFile(file, '/rfq-attachments');
                         setAttachments(prev => [...prev, { url: res.url, fileId: res.fileId, name: res.name }]);
-                        setUploadingFile(false);
                         showToast('Spec file uploaded');
-                      }}
-                      onError={() => {
-                        setUploadingFile(false);
+                      } catch (err) {
                         showToast('File upload failed', 'error');
-                      }}
-                    />
-                  </label>
-                </IKContext>
+                      } finally {
+                        setUploadingFile(false);
+                      }
+                    }}
+                  />
+                </label>
               </div>
             </div>
 

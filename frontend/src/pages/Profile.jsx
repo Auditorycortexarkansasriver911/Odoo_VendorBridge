@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { IKContext, IKUpload } from 'imagekitio-react';
+
 import { User, Shield, Phone, MapPin, Info, Save, Upload } from 'lucide-react';
 
 import { updateProfile } from '../services/authApi.js';
 import { updateProfileSuccess } from '../store/authSlice.js';
-import api from '../services/api.js';
+import api, { uploadFile } from '../services/api.js';
 import Card from '../components/common/Card.jsx';
 import Input from '../components/common/Input.jsx';
 import Button from '../components/common/Button.jsx';
@@ -96,39 +96,36 @@ export default function Profile() {
             </div>
 
             {/* Avatar Upload */}
-            <IKContext
-              publicKey={import.meta.env.VITE_IK_PUBLIC_KEY || 'developer-placeholder-public-key'}
-              urlEndpoint={import.meta.env.VITE_IK_URL_ENDPOINT || 'https://ik.imagekit.io/developer-placeholder-endpoint'}
-              authenticator={async () => {
-                const res = await api.get('/upload/auth');
-                return res.data.data;
+            <label 
+              className="btn btn-secondary" 
+              style={{ 
+                fontSize: '12px', 
+                padding: '6px 12px',
+                cursor: uploading ? 'not-allowed' : 'pointer'
               }}
             >
-              <label 
-                className="btn btn-secondary" 
-                style={{ 
-                  fontSize: '12px', 
-                  padding: '6px 12px',
-                  cursor: uploading ? 'not-allowed' : 'pointer'
-                }}
-              >
-                <Upload size={14} style={{ marginRight: '6px' }} /> {uploading ? 'Uploading...' : 'Change Photo'}
-                <IKUpload
-                  folder="/avatars"
-                  style={{ display: 'none' }}
-                  onUploadStart={() => setUploading(true)}
-                  onSuccess={(res) => {
+              <Upload size={14} style={{ marginRight: '6px' }} /> {uploading ? 'Uploading...' : 'Change Photo'}
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                disabled={uploading}
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  setUploading(true);
+                  try {
+                    const res = await uploadFile(file, '/avatars');
                     setAvatar({ url: res.url, fileId: res.fileId, name: res.name });
-                    setUploading(false);
                     showToast('Photo uploaded successfully');
-                  }}
-                  onError={() => {
-                    setUploading(false);
+                  } catch (err) {
                     showToast('Photo upload failed', 'error');
-                  }}
-                />
-              </label>
-            </IKContext>
+                  } finally {
+                    setUploading(false);
+                  }
+                }}
+              />
+            </label>
           </div>
 
           <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13px', color: 'var(--text-secondary)' }}>

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { IKContext, IKUpload } from 'imagekitio-react';
+
 import { Plus, Search, Filter, ShieldCheck, X, Upload } from 'lucide-react';
 
 import { listVendors, createVendor } from '../services/vendorApi.js';
-import api from '../services/api.js';
+import api, { uploadFile } from '../services/api.js';
 import Card from '../components/common/Card.jsx';
 import Table from '../components/common/Table.jsx';
 import Badge from '../components/common/Badge.jsx';
@@ -303,43 +303,40 @@ export default function Vendors() {
               )}
             </div>
             
-            <IKContext
-              publicKey={import.meta.env.VITE_IK_PUBLIC_KEY || 'developer-placeholder-public-key'}
-              urlEndpoint={import.meta.env.VITE_IK_URL_ENDPOINT || 'https://ik.imagekit.io/developer-placeholder-endpoint'}
-              authenticator={async () => {
-                const res = await api.get('/upload/auth');
-                return res.data.data;
+            <label 
+              style={{ 
+                fontSize: '11px', 
+                color: 'var(--accent-color)', 
+                fontWeight: 600, 
+                cursor: uploadingLogo ? 'not-allowed' : 'pointer',
+                border: '1px solid var(--border-color)',
+                padding: '4px 10px',
+                borderRadius: '4px',
+                backgroundColor: '#FFFFFF'
               }}
             >
-              <label 
-                style={{ 
-                  fontSize: '11px', 
-                  color: 'var(--accent-color)', 
-                  fontWeight: 600, 
-                  cursor: uploadingLogo ? 'not-allowed' : 'pointer',
-                  border: '1px solid var(--border-color)',
-                  padding: '4px 10px',
-                  borderRadius: '4px',
-                  backgroundColor: '#FFFFFF'
-                }}
-              >
-                {uploadingLogo ? 'Uploading...' : 'Upload Logo'}
-                <IKUpload
-                  folder="/vendor-logos"
-                  style={{ display: 'none' }}
-                  onUploadStart={() => setUploadingLogo(true)}
-                  onSuccess={(res) => {
+              {uploadingLogo ? 'Uploading...' : 'Upload Logo'}
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                disabled={uploadingLogo}
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  setUploadingLogo(true);
+                  try {
+                    const res = await uploadFile(file, '/vendor-logos');
                     setLogo({ url: res.url, fileId: res.fileId });
-                    setUploadingLogo(false);
                     showToast('Logo uploaded successfully');
-                  }}
-                  onError={() => {
-                    setUploadingLogo(false);
+                  } catch (err) {
                     showToast('Logo upload failed', 'error');
-                  }}
-                />
-              </label>
-            </IKContext>
+                  } finally {
+                    setUploadingLogo(false);
+                  }
+                }}
+              />
+            </label>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -452,42 +449,38 @@ export default function Vendors() {
               ))}
             </div>
 
-            <IKContext
-              publicKey={import.meta.env.VITE_IK_PUBLIC_KEY || 'developer-placeholder-public-key'}
-              urlEndpoint={import.meta.env.VITE_IK_URL_ENDPOINT || 'https://ik.imagekit.io/developer-placeholder-endpoint'}
-              authenticator={async () => {
-                const res = await api.get('/upload/auth');
-                return res.data.data;
+            <label 
+              className="btn btn-secondary" 
+              style={{ 
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 12px',
+                cursor: uploadingDoc ? 'not-allowed' : 'pointer',
+                fontSize: '13px'
               }}
             >
-              <label 
-                className="btn btn-secondary" 
-                style={{ 
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '8px 12px',
-                  cursor: uploadingDoc ? 'not-allowed' : 'pointer',
-                  fontSize: '13px'
-                }}
-              >
-                <Upload size={14} /> {uploadingDoc ? 'Uploading...' : 'Upload Document'}
-                <IKUpload
-                  folder="/vendor-docs"
-                  style={{ display: 'none' }}
-                  onUploadStart={() => setUploadingDoc(true)}
-                  onSuccess={(res) => {
+              <Upload size={14} /> {uploadingDoc ? 'Uploading...' : 'Upload Document'}
+              <input
+                type="file"
+                style={{ display: 'none' }}
+                disabled={uploadingDoc}
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  setUploadingDoc(true);
+                  try {
+                    const res = await uploadFile(file, '/vendor-docs');
                     setDocuments(prev => [...prev, { url: res.url, fileId: res.fileId, name: res.name }]);
-                    setUploadingDoc(false);
                     showToast('Document uploaded successfully');
-                  }}
-                  onError={() => {
-                    setUploadingDoc(false);
+                  } catch (err) {
                     showToast('Document upload failed', 'error');
-                  }}
-                />
-              </label>
-            </IKContext>
+                  } finally {
+                    setUploadingDoc(false);
+                  }
+                }}
+              />
+            </label>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
