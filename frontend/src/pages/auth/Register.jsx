@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, User, Mail, Lock, Phone, Globe, ArrowRight, CheckCircle2, Upload } from 'lucide-react';
+import { Eye, EyeOff, User, Mail, Lock, Phone, Globe, ArrowRight, CheckCircle2, Upload, ClipboardList, BadgeCheck, Building2, ShieldCheck } from 'lucide-react';
 import { register as registerApi, verifyOtp as verifyOtpApi } from '../../services/authApi.js';
 import { setCredentials } from '../../store/authSlice.js';
 import { uploadFile } from '../../services/api.js';
 import { showToast } from '../../components/common/Toast.jsx';
 
 const ROLES = [
-  { value: 'officer', label: '📋  Procurement Officer', desc: 'Creates RFQs, manages vendors' },
-  { value: 'manager', label: '✅  Procurement Manager', desc: 'Approves quotes & purchase orders' },
-  { value: 'vendor', label: '🏭  Vendor Partner', desc: 'Submits quotations for RFQs' },
-  { value: 'admin', label: '🔐  Administrator', desc: 'Full system access' },
+  { value: 'officer', label: 'Procurement Officer', desc: 'Creates RFQs, manages vendors', Icon: ClipboardList },
+  { value: 'manager', label: 'Procurement Manager', desc: 'Approves quotes & purchase orders', Icon: BadgeCheck },
+  { value: 'vendor', label: 'Vendor Partner', desc: 'Submits quotations for RFQs', Icon: Building2 },
+  { value: 'admin', label: 'Administrator', desc: 'Full system access', Icon: ShieldCheck },
 ];
 
 const FieldInput = ({ label, type = 'text', placeholder, value, onChange, icon: Icon, rightNode, half }) => (
@@ -231,21 +231,26 @@ export default function Register() {
             Your Role
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-            {ROLES.map((r) => (
+            {ROLES.map(({ value, label, desc, Icon: RoleIcon }) => (
               <button
-                key={r.value} type="button"
-                onClick={() => setRole(r.value)}
+                key={value} type="button"
+                onClick={() => setRole(value)}
                 style={{
-                  padding: '10px 12px', borderRadius: '7px', cursor: 'pointer', textAlign: 'left',
-                  border: role === r.value ? '1.5px solid #E8A020' : '1.5px solid #E5E3DE',
-                  backgroundColor: role === r.value ? 'rgba(232,160,32,0.06)' : '#F7F6F3',
-                  transition: 'all 0.12s',
+                  padding: '11px 12px', borderRadius: '7px', cursor: 'pointer', textAlign: 'left',
+                  border: role === value ? '1.5px solid #E8A020' : '1.5px solid #E5E3DE',
+                  backgroundColor: role === value ? 'rgba(232,160,32,0.06)' : '#F7F6F3',
+                  transition: 'all 0.12s', display: 'flex', alignItems: 'flex-start', gap: '10px',
                 }}
               >
-                <p style={{ fontSize: '12px', fontWeight: 700, color: role === r.value ? '#111111' : '#6B6860', margin: '0 0 2px', fontFamily: "'DM Sans', sans-serif" }}>
-                  {r.label}
-                </p>
-                <p style={{ fontSize: '11px', color: '#9B9890', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>{r.desc}</p>
+                <div style={{ marginTop: '1px', color: role === value ? '#E8A020' : '#9B9890', flexShrink: 0 }}>
+                  <RoleIcon size={15} strokeWidth={2} />
+                </div>
+                <div>
+                  <p style={{ fontSize: '12px', fontWeight: 700, color: role === value ? '#111111' : '#6B6860', margin: '0 0 2px', fontFamily: "'DM Sans', sans-serif" }}>
+                    {label}
+                  </p>
+                  <p style={{ fontSize: '11px', color: '#9B9890', margin: 0, fontFamily: "'DM Sans', sans-serif", lineHeight: 1.4 }}>{desc}</p>
+                </div>
               </button>
             ))}
           </div>
