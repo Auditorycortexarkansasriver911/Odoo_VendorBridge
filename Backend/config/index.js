@@ -6,7 +6,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load env from Backend/.env
-dotenv.config({ path: path.join(__dirname, '../.env') });
+const result = dotenv.config({ path: path.join(__dirname, '../.env') });
+if (result.error) {
+  console.error('Dotenv error:', result.error);
+} else {
+  console.log('Dotenv loaded keys:', Object.keys(result.parsed || {}));
+}
+
+// LangChain/Gemini looks for GOOGLE_API_KEY in the environment
+process.env.GOOGLE_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_GEMINI_API;
+
+console.log('--- Environment Configuration Loaded ---');
+console.log('Mongo URI:', process.env.MONGO_URI ? 'LOADED' : 'MISSING');
+console.log('Redis Host:', process.env.REDIS_HOST ? 'LOADED' : 'MISSING');
+console.log('Google Gemini API Key:', process.env.GOOGLE_API_KEY ? 'LOADED' : 'MISSING');
+console.log('----------------------------------------');
 
 export default {
   app: {

@@ -16,9 +16,6 @@ const userSchema = new mongoose.Schema({
   isActive:   { type: Boolean, default: true },
 }, { timestamps: true });
 
-userSchema.index({ email: 1 });
-userSchema.index({ googleId: 1 }, { sparse: true });
-
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password') || !this.password) return next();
   this.password = await bcrypt.hash(this.password, 12);
