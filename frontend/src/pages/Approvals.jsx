@@ -146,11 +146,14 @@ export default function Approvals() {
                 <td>
                   <div>
                     <span style={{ fontWeight: 600 }}>{approval.rfq?.rfqNumber}</span>
-                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{approval.rfq?.title}</p>
+                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>{approval.rfq?.title}</p>
+                    <p style={{ fontSize: '11px', color: 'var(--text-secondary)', opacity: 0.7, margin: '2px 0 0', fontFamily: 'monospace' }}>
+                      Quote #{String(approval._id).slice(-6).toUpperCase()}
+                    </p>
                   </div>
                 </td>
                 <td>{approval.vendor?.companyName}</td>
-                <td style={{ fontWeight: 600 }}>{formatCurrency(approval.amount)}</td>
+                <td style={{ fontWeight: 600 }}>{formatCurrency(approval.quotation?.grandTotal ?? approval.amount ?? 0)}</td>
                 <td>
                   <Badge status={approval.overallStatus === 'pending' ? 'L1 Review' : approval.overallStatus === 'l1_approved' ? 'L2 Review' : 'Completed'}>
                     {approval.overallStatus === 'pending' ? 'L1 Review' : approval.overallStatus === 'l1_approved' ? 'L2 Review' : 'Completed'}
@@ -174,6 +177,18 @@ export default function Approvals() {
               </tr>
             ))}
           </Table>
+          {/* Pagination */}
+          {total > 10 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderTop: '1px solid var(--border-color)' }}>
+              <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                Showing {((page - 1) * 10) + 1}–{Math.min(page * 10, total)} of {total} approvals
+              </span>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <Button variant="secondary" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} style={{ padding: '6px 14px', fontSize: '13px' }}>← Prev</Button>
+                <Button variant="secondary" onClick={() => setPage(p => p + 1)} disabled={page * 10 >= total} style={{ padding: '6px 14px', fontSize: '13px' }}>Next →</Button>
+              </div>
+            </div>
+          )}
         </Card>
       ) : (
         <div className="empty-state">
