@@ -71,8 +71,10 @@ passport.use(new GoogleStrategy({
       }
 
       let user = await User.findOne({ $or: [{ googleId }, { email }] });
+      let isNew = false;
 
       if (!user) {
+        isNew = true;
         user = await User.create({
           googleId,
           email,
@@ -86,6 +88,9 @@ passport.use(new GoogleStrategy({
         user.googleId = googleId;
         await user.save();
       }
+
+      // Attach isNew flag to user for route handler to see
+      user._isNewGoogleUser = isNew;
 
       return done(null, user);
     } catch (err) {

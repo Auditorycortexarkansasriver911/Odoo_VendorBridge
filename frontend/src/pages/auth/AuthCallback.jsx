@@ -14,13 +14,20 @@ export default function AuthCallback() {
   useEffect(() => {
     async function handleCallback() {
       const token = searchParams.get('token');
+      const isNew = searchParams.get('isNew') === 'true';
       if (token) {
         try {
           localStorage.setItem('accessToken', token);
           // Fetch user profile info
           const res = await getMe();
           dispatch(setCredentials({ user: res.data.data }));
-          showToast('Successfully signed in with Google!');
+          
+          if (isNew) {
+            localStorage.setItem('showGoogleOAuthRoleAlert', 'true');
+            showToast('Account created with Google! Defaulting to Procurement Officer.', 'info');
+          } else {
+            showToast('Successfully signed in with Google!');
+          }
           navigate('/dashboard');
         } catch (err) {
           localStorage.removeItem('accessToken');

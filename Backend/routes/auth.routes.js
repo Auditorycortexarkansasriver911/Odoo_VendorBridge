@@ -38,7 +38,8 @@ router.get('/google/callback',
   (req, res) => {
     const { accessToken, refreshToken } = generateTokens(req.user._id);
     res.cookie('refreshToken', refreshToken, cookieOptions);
-    res.redirect(`${config.app.clientUrl}/auth/callback?token=${accessToken}`);
+    const isNew = req.user._isNewGoogleUser ? 'true' : 'false';
+    res.redirect(`${config.app.clientUrl}/auth/callback?token=${accessToken}&isNew=${isNew}`);
   }
 );
 

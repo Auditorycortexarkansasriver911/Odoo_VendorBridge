@@ -37,7 +37,15 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showRoleAlert, setShowRoleAlert] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem('showGoogleOAuthRoleAlert') === 'true') {
+      setShowRoleAlert(true);
+      localStorage.removeItem('showGoogleOAuthRoleAlert');
+    }
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -304,6 +312,42 @@ export default function Dashboard() {
           )}
         </Card>
       </div>
+
+      <Modal
+        isOpen={showRoleAlert}
+        onClose={() => setShowRoleAlert(false)}
+        title="Google Auth — Role Notice"
+        style={{ maxWidth: '480px' }}
+      >
+        <div style={{ textAlign: 'center', padding: '8px 0' }}>
+          <div 
+            style={{ 
+              width: '56px', 
+              height: '56px', 
+              borderRadius: '50%', 
+              backgroundColor: 'rgba(245, 158, 11, 0.1)', 
+              color: 'var(--accent-color)', 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              marginBottom: '16px' 
+            }}
+          >
+            <Building size={28} />
+          </div>
+          <h4 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '12px' }}>
+            Registered as Procurement Role
+          </h4>
+          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.6', marginBottom: '24px' }}>
+            You have logged in directly via Google. By default, you have been registered with the <strong>Procurement (Officer)</strong> role.
+            <br /><br />
+            If you need to access the platform as an <strong>Admin</strong> or <strong>Vendor</strong>, please first register an account manually using the registration form.
+          </p>
+          <Button onClick={() => setShowRoleAlert(false)} variant="primary" style={{ width: '100%' }}>
+            Got it, continue
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 }
