@@ -79,7 +79,7 @@ export default function Invoices() {
   return (
     <div className="page-wrapper">
       {/* ── Header ── */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+      <div className="page-header">
         <div>
           <h1 style={{ fontSize: '28px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
             Tax Invoices

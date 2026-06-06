@@ -105,7 +105,7 @@ export default function Approvals() {
   return (
     <div className="page-wrapper">
       {/* Page Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+      <div className="page-header">
         <div>
           <h1 style={{ fontSize: '28px', color: 'var(--text-primary)', marginBottom: '4px' }}>Procurement Approvals</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>

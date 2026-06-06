@@ -92,14 +92,11 @@ h1, h2, h3, h4, h5, h6 {
 
 .main-content {
   flex-grow: 1;
-  margin-left: var(--sidebar-width);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  transition: margin-left 0.25s ease;
   background: var(--content-bg);
   min-width: 0;
-  width: 100%;
 }
 
 .page-wrapper {
@@ -324,14 +321,14 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--sidebar-bg);
   color: #FFFFFF;
   height: 100vh;
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
   display: flex;
   flex-direction: column;
   z-index: 200;
   border-right: 1px solid #334155;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
 }
 
 .sidebar-backdrop {
@@ -380,6 +377,15 @@ h1, h2, h3, h4, h5, h6 {
   color: #FFFFFF;
 }
 
+/* Page Header responsiveness helper */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  gap: 16px;
+}
+
 /* Form layout responsiveness helper */
 .form-grid-2 {
   display: grid;
@@ -395,7 +401,14 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (max-width: 1024px) {
   .app-sidebar {
+    position: fixed;
+    left: 0;
     transform: translateX(-100%);
+  }
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
   .app-sidebar.open {
     transform: translateX(0);

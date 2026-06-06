@@ -128,7 +128,7 @@ export default function Reports() {
   return (
     <div className="page-wrapper">
       {/* ── Header ── */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+      <div className="page-header">
         <div>
           <h1 style={{ fontSize: '28px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>Analytics & Reports</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
@@ -167,9 +167,9 @@ export default function Reports() {
           <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <BarChart3 size={18} /> Monthly Procurement Volume Trend
           </h3>
-          <div style={{ width: '100%', height: '300px' }}>
+          <div style={{ width: '100%', minWidth: 0 }}>
             {analytics?.monthlyTrend?.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="99%" height={300}>
                 <BarChart
                   data={analytics.monthlyTrend}
                   margin={{ top: 10, right: 16, left: 16, bottom: 0 }}
@@ -206,9 +206,9 @@ export default function Reports() {
           <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <PieIcon size={18} /> Industry Category Spend Distribution
           </h3>
-          <div style={{ width: '100%', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '100%', minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {pieData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="99%" height={300}>
                 <PieChart>
                   <Pie
                     data={pieData}

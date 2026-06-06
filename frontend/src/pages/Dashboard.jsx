@@ -37,6 +37,13 @@ import Modal from '../components/common/Modal.jsx';
 
 const COLORS = ['#0F172A', '#F59E0B', '#10B981', '#EF4444', '#64748B'];
 
+const fmtAxis = (val) => {
+  if (val >= 10000000) return `₹${(val / 10000000).toFixed(1)}Cr`;
+  if (val >= 100000) return `₹${(val / 100000).toFixed(1)}L`;
+  if (val >= 1000) return `₹${(val / 1000).toFixed(0)}K`;
+  return `₹${val}`;
+};
+
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [analytics, setAnalytics] = useState(null);
@@ -108,7 +115,7 @@ export default function Dashboard() {
     return (
       <div className="page-wrapper">
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+        <div className="page-header">
           <div>
             <h1 style={{ fontSize: '28px', color: 'var(--text-primary)', marginBottom: '4px' }}>
               Welcome, {stats?.companyName || user?.firstName}!
@@ -270,7 +277,7 @@ export default function Dashboard() {
   return (
     <div className="page-wrapper">
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+      <div className="page-header">
         <div>
           <h1 style={{ fontSize: '28px', color: 'var(--text-primary)', marginBottom: '4px' }}>Welcome to VendorBridge</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
@@ -352,10 +359,10 @@ export default function Dashboard() {
           <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <TrendingUp size={18} /> Monthly Spend Trend (INR)
           </h3>
-          <div style={{ width: '100%', height: '300px' }}>
+          <div style={{ width: '100%', minWidth: 0 }}>
             {analytics?.monthlyTrend?.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={analytics.monthlyTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <ResponsiveContainer width="99%" height={300}>
+                <AreaChart data={analytics.monthlyTrend} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorSpend" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="var(--accent-color)" stopOpacity={0.2} />
@@ -364,7 +371,13 @@ export default function Dashboard() {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
                   <XAxis dataKey="month" tickLine={false} style={{ fontSize: '12px', fill: 'var(--text-secondary)' }} />
-                  <YAxis tickLine={false} style={{ fontSize: '12px', fill: 'var(--text-secondary)' }} />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    style={{ fontSize: '12px', fill: 'var(--text-secondary)' }}
+                    tickFormatter={fmtAxis}
+                    width={60}
+                  />
                   <Tooltip
                     formatter={(val) => [formatCurrency(val), 'Spend']}
                     contentStyle={{ backgroundColor: '#FFFFFF', borderRadius: '8px', border: '1px solid var(--border-color)' }}
@@ -384,9 +397,9 @@ export default function Dashboard() {
           <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Building size={18} /> Spend by Category
           </h3>
-          <div style={{ width: '100%', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '100%', minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {pieData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="99%" height={300}>
                 <PieChart>
                   <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
                     {pieData.map((entry, index) => (

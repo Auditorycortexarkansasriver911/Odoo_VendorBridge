@@ -141,7 +141,7 @@ export default function Vendors() {
   return (
     <div className="page-wrapper">
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+      <div className="page-header">
         <div>
           <h1 style={{ fontSize: '28px', color: 'var(--text-primary)', marginBottom: '4px' }}>Vendors</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
