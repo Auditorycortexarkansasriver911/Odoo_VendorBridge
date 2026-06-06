@@ -22,12 +22,11 @@ const poSchema = new mongoose.Schema({
 
 poSchema.index({ vendor: 1, status: 1 });
 
-poSchema.pre('save', async function(next) {
+poSchema.pre('save', async function() {
   if (!this.poNumber) {
     const count = await mongoose.model('PurchaseOrder').countDocuments();
     this.poNumber = `PO-${new Date().getFullYear()}-${String(count + 1).padStart(4, '0')}`;
   }
-  next();
 });
 
 export default mongoose.model('PurchaseOrder', poSchema);

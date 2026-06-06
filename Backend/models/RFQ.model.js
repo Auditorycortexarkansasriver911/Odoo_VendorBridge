@@ -16,12 +16,11 @@ const rfqSchema = new mongoose.Schema({
 
 rfqSchema.index({ status: 1, createdBy: 1, deadline: 1 });
 
-rfqSchema.pre('save', async function(next) {
+rfqSchema.pre('save', async function() {
   if (!this.rfqNumber) {
     const count = await mongoose.model('RFQ').countDocuments();
     this.rfqNumber = `RFQ-${new Date().getFullYear()}-${String(count + 1).padStart(4, '0')}`;
   }
-  next();
 });
 
 export default mongoose.model('RFQ', rfqSchema);

@@ -20,12 +20,11 @@ const invoiceSchema = new mongoose.Schema({
 
 invoiceSchema.index({ status: 1 });
 
-invoiceSchema.pre('save', async function(next) {
+invoiceSchema.pre('save', async function() {
   if (!this.invoiceNumber) {
     const count = await mongoose.model('Invoice').countDocuments();
     this.invoiceNumber = `INV-${new Date().getFullYear()}-${String(count + 1).padStart(4, '0')}`;
   }
-  next();
 });
 
 export default mongoose.model('Invoice', invoiceSchema);
