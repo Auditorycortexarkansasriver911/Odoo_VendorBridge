@@ -76,11 +76,10 @@ export default function Topbar({ onToggleSidebar }) {
         padding: '0 24px',
         position: 'sticky',
         top: 0,
-        zIndex: 50,
+        zIndex: 100,
         width: '100%',
-        maxWidth: '100%',
-        overflow: 'hidden',
         boxSizing: 'border-box',
+        flexShrink: 0,
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center' }}>
