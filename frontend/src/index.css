@@ -102,7 +102,7 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 100vh;
   background: var(--content-bg);
   min-width: 0;
-  max-width: 100%;
+  max-width: calc(100% - var(--sidebar-width));
   overflow-x: hidden;
 }
 
@@ -441,6 +441,7 @@ h1, h2, h3, h4, h5, h6 {
   }
   .main-content {
     margin-left: 0 !important;
+    max-width: 100%;
   }
   .page-wrapper {
     padding: 20px 16px;
