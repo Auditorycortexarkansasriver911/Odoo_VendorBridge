@@ -117,19 +117,35 @@ export const getInvoiceDetail = asyncHandler(async (req, res) => {
 export const downloadInvoicePdf = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const invoice = await Invoice.findById(id);
-  if (!invoice || !invoice.pdfUrl) {
-    throw new ApiError(404, 'Invoice PDF not found or not generated');
+  const invoice = await Invoice.findById(id).populate('po').populate('vendor');
+  if (!invoice) {
+    throw new ApiError(404, 'Invoice not found');
   }
 
-  // Fetch the PDF from ImageKit and stream it
-  const response = await fetch(invoice.pdfUrl);
-  if (!response.ok) {
-    throw new ApiError(500, 'Failed to fetch invoice PDF from storage');
+  let buffer;
+  let fetchedSuccessful = false;
+
+  if (invoice.pdfUrl) {
+    try {
+      const response = await fetch(invoice.pdfUrl);
+      if (response.ok) {
+        const arrayBuffer = await response.arrayBuffer();
+        buffer = Buffer.from(arrayBuffer);
+        fetchedSuccessful = true;
+      } else {
+        console.log(`Fetch from ImageKit returned ${response.status}. Falling back to local generation.`);
+      }
+    } catch (err) {
+      console.log('Fetch from ImageKit failed, falling back to local generation:', err.message);
+    }
   }
 
-  const arrayBuffer = await response.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
+  if (!fetchedSuccessful) {
+    // Regenerate on the fly!
+    const { generateInvoicePDF } = await import('../services/pdfService.js');
+    const result = await generateInvoicePDF(invoice, invoice.po, invoice.vendor);
+    buffer = result.buffer;
+  }
 
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', `attachment; filename="${invoice.invoiceNumber}.pdf"`);
@@ -155,18 +171,30 @@ export const emailInvoice = asyncHandler(async (req, res) => {
     throw new ApiError(404, 'Invoice not found');
   }
 
-  if (!invoice.pdfUrl) {
-    throw new ApiError(400, 'Invoice PDF is not generated yet');
+  let buffer;
+  let fetchedSuccessful = false;
+
+  if (invoice.pdfUrl) {
+    try {
+      const response = await fetch(invoice.pdfUrl);
+      if (response.ok) {
+        const arrayBuffer = await response.arrayBuffer();
+        buffer = Buffer.from(arrayBuffer);
+        fetchedSuccessful = true;
+      } else {
+        console.log(`Fetch from ImageKit returned ${response.status}. Falling back to local generation.`);
+      }
+    } catch (err) {
+      console.log('Fetch from ImageKit failed, falling back to local generation:', err.message);
+    }
   }
 
-  // Fetch file from ImageKit
-  const response = await fetch(invoice.pdfUrl);
-  if (!response.ok) {
-    throw new ApiError(500, 'Failed to retrieve invoice PDF for emailing');
+  if (!fetchedSuccessful) {
+    // Regenerate on the fly!
+    const { generateInvoicePDF } = await import('../services/pdfService.js');
+    const result = await generateInvoicePDF(invoice, invoice.po, invoice.vendor);
+    buffer = result.buffer;
   }
-
-  const arrayBuffer = await response.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
 
   await sendInvoiceEmail(invoice.vendor.email, invoice, buffer, `${invoice.invoiceNumber}.pdf`);
 
