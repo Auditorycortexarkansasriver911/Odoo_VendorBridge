@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
-import { Bell, LogOut, User as UserIcon, ChevronDown, Check } from 'lucide-react';
+import { Bell, LogOut, User as UserIcon, ChevronDown, Check, Menu } from 'lucide-react';
 import Avatar from '../common/Avatar.jsx';
 import { logout } from '../../store/authSlice.js';
 import api from '../../services/api.js';
 import { markNotificationRead, setNotifications } from '../../store/uiSlice.js';
 import { showToast } from '../common/Toast.jsx';
 
-export default function Topbar() {
+export default function Topbar({ onToggleSidebar }) {
   const { user } = useSelector((state) => state.auth);
   const { notifications, unreadCount } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
@@ -80,6 +80,15 @@ export default function Topbar() {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center' }}>
+        {/* Toggle Sidebar Button for Mobile */}
+        <button 
+          className="sidebar-toggle-btn" 
+          onClick={onToggleSidebar}
+          aria-label="Toggle Sidebar"
+        >
+          <Menu size={20} />
+        </button>
+        
         <h2 style={{ fontSize: '18px', fontWeight: 500 }}>
           Welcome back, {user?.firstName || 'User'}
         </h2>

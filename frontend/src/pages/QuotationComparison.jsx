@@ -132,11 +132,9 @@ export default function QuotationComparison() {
         <>
           {/* ── Summary Score Cards ── */}
           <div
+            className="comparison-grid"
             style={{
-              display: 'grid',
               gridTemplateColumns: `repeat(${quotations.length}, 1fr)`,
-              gap: '16px',
-              marginBottom: '24px',
             }}
           >
             {quotations.map((q, idx) => (

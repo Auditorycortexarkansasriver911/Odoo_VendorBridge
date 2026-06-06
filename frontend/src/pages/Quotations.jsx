@@ -148,7 +148,7 @@ export default function Quotations() {
       ) : filtered.length > 0 ? (
         <>
           {/* Card Grid for quotations */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
             {filtered.map((q) => {
               const sc = STATUS_COLORS[q.status] || STATUS_COLORS.draft;
               const isSelected = q.status === 'selected';

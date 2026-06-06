@@ -258,7 +258,7 @@ export default function RFQs() {
           <Spinner />
         </div>
       ) : rfqs.length > 0 ? (
-        <div className="grid-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
+        <div className="grid-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
           {rfqs.map(rfq => (
             <Card 
               key={rfq._id}

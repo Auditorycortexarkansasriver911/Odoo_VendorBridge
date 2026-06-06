@@ -404,8 +404,7 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* Recent Purchase Orders & Top Vendors */}
-      <div className="grid-3" style={{ gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+      <div className="dashboard-split-grid" style={{ marginBottom: '24px' }}>
         <Card style={{ marginBottom: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <h3 style={{ fontSize: '16px', fontWeight: 600 }}>Recent Purchase Orders</h3>

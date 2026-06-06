@@ -147,6 +147,7 @@ export default function ChatPanel() {
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        className="chat-assistant-toggle"
         style={{
           position: 'fixed',
           bottom: '24px',
@@ -173,21 +174,9 @@ export default function ChatPanel() {
 
       {/* Slide-in Drawer */}
       <div
+        className="chat-assistant-drawer"
         style={{
-          position: 'fixed',
-          bottom: '96px',
-          right: '24px',
-          width: '380px',
-          height: '500px',
-          backgroundColor: '#FFFFFF',
-          borderRadius: '8px',
-          boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
-          border: '1px solid var(--border-color)',
           display: isOpen ? 'flex' : 'none',
-          flexDirection: 'column',
-          zIndex: 500,
-          overflow: 'hidden',
-          animation: 'slide-up 0.25s ease-out'
         }}
       >
         {/* Header */}
@@ -289,8 +278,23 @@ export default function ChatPanel() {
         </form>
       </div>
       
-      {/* Styles for typing animation */}
+      {/* Styles for typing animation & responsiveness */}
       <style>{`
+        .chat-assistant-drawer {
+          position: fixed;
+          bottom: 96px;
+          right: 24px;
+          width: 380px;
+          height: 500px;
+          background-color: #FFFFFF;
+          border-radius: 8px;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+          border: 1px solid var(--border-color);
+          flex-direction: column;
+          z-index: 500;
+          overflow: hidden;
+          animation: slide-up 0.25s ease-out;
+        }
         .typing-dot {
           width: 6px;
           height: 6px;
@@ -306,6 +310,20 @@ export default function ChatPanel() {
         @keyframes slide-up {
           from { transform: translateY(20px); opacity: 0; }
           to { transform: translateY(0); opacity: 1; }
+        }
+        @media (max-width: 640px) {
+          .chat-assistant-drawer {
+            bottom: 80px;
+            right: 16px;
+            width: calc(100vw - 32px);
+            height: 420px;
+          }
+          .chat-assistant-toggle {
+            bottom: 16px !important;
+            right: 16px !important;
+            width: 48px !important;
+            height: 48px !important;
+          }
         }
       `}</style>
     </>

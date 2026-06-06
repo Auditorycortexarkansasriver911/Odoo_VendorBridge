@@ -224,7 +224,7 @@ export default function Vendors() {
           <Spinner />
         </div>
       ) : vendors.length > 0 ? (
-        <div className="grid-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
+        <div className="grid-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
           {vendors.map(v => (
             <Card 
               key={v._id} 
@@ -339,7 +339,7 @@ export default function Vendors() {
             </label>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div className="form-grid-2">
             <Input
               label="Company Name"
               placeholder="Acme Industrial Corp"
@@ -356,7 +356,7 @@ export default function Vendors() {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div className="form-grid-2">
             <Input
               label="GST Number"
               placeholder="27AAAAA1111A1Z1"
@@ -374,7 +374,7 @@ export default function Vendors() {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div className="form-grid-2">
             <Input
               label="Email Address"
               type="email"
@@ -392,7 +392,7 @@ export default function Vendors() {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div className="form-grid-2">
             <Input
               label="Linked User Email (Optional)"
               placeholder="user@vendor.com"

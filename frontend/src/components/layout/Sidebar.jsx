@@ -8,11 +8,12 @@ import {
   ShoppingBag, 
   FileSpreadsheet, 
   BarChart2, 
-  Activity 
+  Activity,
+  X
 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   const { user } = useSelector((state) => state.auth);
 
   const navItems = [
@@ -31,25 +32,14 @@ export default function Sidebar() {
 
   return (
     <div 
-      style={{
-        width: 'var(--sidebar-width)',
-        backgroundColor: 'var(--sidebar-bg)',
-        color: '#FFFFFF',
-        height: '100vh',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        zIndex: 100,
-        borderRight: '1px solid #334155'
-      }}
+      className={`app-sidebar ${isOpen ? 'open' : ''}`}
     >
       <div 
         style={{
           height: 'var(--header-height)',
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'space-between',
           padding: '0 24px',
           borderBottom: '1px solid #334155'
         }}
@@ -74,6 +64,15 @@ export default function Sidebar() {
             VendorBridge
           </span>
         </div>
+        
+        {/* Mobile Sidebar Close Button */}
+        <button 
+          className="sidebar-close-btn"
+          onClick={onClose}
+          aria-label="Close Sidebar"
+        >
+          <X size={18} />
+        </button>
       </div>
 
       <nav 
