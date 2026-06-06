@@ -286,11 +286,11 @@ export default function Dashboard() {
                         color: 'var(--text-primary)'
                       }}
                     >
-                      {v.vendorDetails.companyName.charAt(0)}
+                      {v.vendorDetails?.companyName?.charAt(0) || 'V'}
                     </div>
                     <div>
                       <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                        {v.vendorDetails.companyName}
+                        {v.vendorDetails?.companyName || 'Unknown Vendor'}
                       </p>
                       <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                         {v.poCount} POs issued
