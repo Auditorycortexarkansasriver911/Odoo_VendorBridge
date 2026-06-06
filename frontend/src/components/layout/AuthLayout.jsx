@@ -20,13 +20,16 @@ export default function AuthLayout() {
       {/* Logo Container */}
       <div style={{ marginBottom: '32px', textAlign: 'center' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '12px' }}>
-          {/* Minimalist Professional Logo Icon */}
+          {/* Minimalist Professional Logo Icon (Transparent BG) */}
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="32" height="32" rx="8" fill="var(--brand-black)"/>
-            {/* Elegant connection bridge vector */}
-            <path d="M8 20C12 12 20 12 24 20" stroke="var(--brand-amber)" strokeWidth="2.5" strokeLinecap="round"/>
-            <path d="M11 15.5L13.5 18" stroke="var(--brand-amber)" strokeWidth="2" strokeLinecap="round"/>
-            <path d="M21 15.5L18.5 18" stroke="var(--brand-amber)" strokeWidth="2" strokeLinecap="round"/>
+            {/* Bridge arch - dark charcoal for high visibility */}
+            <path d="M6 22C10 14 22 14 26 22" stroke="var(--brand-black)" strokeWidth="2.5" strokeLinecap="round"/>
+            {/* Roadbed/horizontal line */}
+            <path d="M4 22H28" stroke="var(--brand-black)" strokeWidth="2" strokeLinecap="round"/>
+            {/* Vertical suspension hangers - brand amber highlights */}
+            <path d="M11 17V22" stroke="var(--brand-amber)" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M16 15V22" stroke="var(--brand-amber)" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M21 17V22" stroke="var(--brand-amber)" strokeWidth="2" strokeLinecap="round"/>
           </svg>
           <span style={{ 
             fontFamily: "var(--font-brand)", 
