@@ -8,7 +8,7 @@ export default function ChatPanel() {
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Hello! I am your VendorBridge assistant. Ask me anything about vendors, RFQs, purchase orders, or analytics.' }
+    { role: 'assistant', content: 'Hello! I am ZErio AI, your VendorBridge assistant. Ask me anything about vendors, RFQs, purchase orders, or analytics.' }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -168,7 +168,7 @@ export default function ChatPanel() {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <MessageSquare size={18} color="var(--accent-color)" />
-            <span style={{ fontWeight: 600, fontSize: '15px' }}>Procurement AI</span>
+            <span style={{ fontWeight: 600, fontSize: '15px' }}>ZErio AI</span>
           </div>
           <button
             onClick={handleClearHistory}
