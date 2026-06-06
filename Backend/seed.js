@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
 import { connectDB } from './config/db.js';
 import User from './models/User.model.js';
 import Vendor from './models/Vendor.model.js';
@@ -27,14 +26,14 @@ const seed = async () => {
   await ActivityLog.deleteMany({});
 
   console.log('Generating password hashes...');
-  const hashedPassword = await bcrypt.hash('TestPass123', 12);
+  const RAW_PASSWORD = 'TestPass123'; // Pre-save hook in User model will hash this
 
   // 1. Create Default Role Users
   const admin = await User.create({
     firstName: 'System',
     lastName: 'Admin',
     email: 'test_admin@vendorbridge.com',
-    password: hashedPassword,
+    password: RAW_PASSWORD,
     role: 'admin',
     isVerified: true,
     isActive: true,
@@ -45,7 +44,7 @@ const seed = async () => {
     firstName: 'Procurement',
     lastName: 'Manager',
     email: 'test_manager@vendorbridge.com',
-    password: hashedPassword,
+    password: RAW_PASSWORD,
     role: 'manager',
     isVerified: true,
     isActive: true,
@@ -56,7 +55,7 @@ const seed = async () => {
     firstName: 'Procurement',
     lastName: 'Officer',
     email: 'test_officer@vendorbridge.com',
-    password: hashedPassword,
+    password: RAW_PASSWORD,
     role: 'officer',
     isVerified: true,
     isActive: true,
@@ -68,7 +67,7 @@ const seed = async () => {
     firstName: 'Acme',
     lastName: 'Supplier',
     email: 'test_vendor1@vendorbridge.com',
-    password: hashedPassword,
+    password: RAW_PASSWORD,
     role: 'vendor',
     isVerified: true,
     isActive: true,
@@ -77,7 +76,7 @@ const seed = async () => {
     firstName: 'Globex',
     lastName: 'Logistics',
     email: 'test_vendor2@vendorbridge.com',
-    password: hashedPassword,
+    password: RAW_PASSWORD,
     role: 'vendor',
     isVerified: true,
     isActive: true,
@@ -86,7 +85,7 @@ const seed = async () => {
     firstName: 'Initech',
     lastName: 'Hardware',
     email: 'test_vendor3@vendorbridge.com',
-    password: hashedPassword,
+    password: RAW_PASSWORD,
     role: 'vendor',
     isVerified: true,
     isActive: true,
