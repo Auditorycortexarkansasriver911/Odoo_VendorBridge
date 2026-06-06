@@ -44,7 +44,7 @@ export default function ChatPanel() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
           },
-          body: JSON.stringify({ message: userMsg, sessionId: user.id })
+          body: JSON.stringify({ message: userMsg, sessionId: user._id || user.id })
         }
       );
 
@@ -98,7 +98,7 @@ export default function ChatPanel() {
 
   const handleClearHistory = async () => {
     try {
-      await api.delete(`/chat/${user.id}`);
+      await api.delete(`/chat/${user._id || user.id}`);
       setMessages([
         { role: 'assistant', content: 'Conversation history cleared. How can I help you today?' }
       ]);
