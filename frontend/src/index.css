@@ -83,7 +83,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ── Layout shells ─────────────────────────────────────── */
-.app-container { display: flex; min-height: 100vh; }
+.app-container { 
+  display: flex; 
+  min-height: 100vh; 
+  width: 100%;
+  overflow-x: hidden;
+}
 
 .main-content {
   flex-grow: 1;
@@ -93,6 +98,8 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 100vh;
   transition: margin-left 0.25s ease;
   background: var(--content-bg);
+  min-width: 0;
+  width: 100%;
 }
 
 .page-wrapper {
@@ -432,5 +439,8 @@ h1, h2, h3, h4, h5, h6 {
   }
   .page-wrapper {
     padding: 16px 12px;
+  }
+  .topbar-title {
+    display: none !important;
   }
 }

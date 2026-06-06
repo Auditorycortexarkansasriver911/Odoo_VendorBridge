@@ -89,7 +89,7 @@ export default function Topbar({ onToggleSidebar }) {
           <Menu size={20} />
         </button>
         
-        <h2 style={{ fontSize: '18px', fontWeight: 500 }}>
+        <h2 className="topbar-title" style={{ fontSize: '18px', fontWeight: 500 }}>
           Welcome back, {user?.firstName || 'User'}
         </h2>
       </div>
