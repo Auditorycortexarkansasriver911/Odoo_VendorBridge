@@ -16,6 +16,10 @@
 </p>
 
 <p align="center">
+  <a href="https://odoo-vendorbridge.onrender.com">🌐 https://odoo-vendorbridge.onrender.com</a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black" />
   <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white" />
   <img src="https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white" />
@@ -43,6 +47,14 @@
 | Invoices | Activity Logs |
 |----------|---------------|
 | ![Invoices](./Screenshot/Invoices.jpeg) | ![Logs](./Screenshot/ActiveLogs.jpeg) |
+
+### 📱 Mobile View — Fully Responsive
+
+| Mobile Dashboard | Mobile Reports |
+|-----------------|----------------|
+| <img src="./Screenshot/mobileview1.png" width="260" alt="Mobile Dashboard"/> | <img src="./Screenshot/mobileview2.png" width="260" alt="Mobile Reports"/> |
+
+> Pixel-perfect responsive layout across all pages — hamburger sidebar, stacked cards, scrollable tables, live data on mobile.
 
 ---
 
