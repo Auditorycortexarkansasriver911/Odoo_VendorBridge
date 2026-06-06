@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { 
-  TrendingUp, 
-  Building, 
-  Download, 
-  BarChart3, 
-  PieChart as PieIcon, 
-  FileSpreadsheet 
+import {
+  TrendingUp,
+  Building,
+  BarChart3,
+  PieChart as PieIcon,
+  FileSpreadsheet,
+  DollarSign,
+  Package,
+  Users,
 } from 'lucide-react';
-import { 
-  ResponsiveContainer, 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  PieChart, 
-  Pie, 
-  Cell, 
+import {
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  PieChart,
+  Pie,
+  Cell,
   Legend,
   BarChart,
-  Bar
+  Bar,
 } from 'recharts';
 
 import { getAnalytics, exportProcurementData } from '../services/reportApi.js';
@@ -31,7 +30,41 @@ import Button from '../components/common/Button.jsx';
 import Spinner from '../components/common/Spinner.jsx';
 import { showToast } from '../components/common/Toast.jsx';
 
-const COLORS = ['#0F172A', '#F59E0B', '#10B981', '#EF4444', '#64748B'];
+const COLORS = ['#0F172A', '#F59E0B', '#10B981', '#EF4444', '#6366F1', '#64748B'];
+
+// ── Axis tick formatter: 750000 → ₹7.5L, 10000000 → ₹1Cr ────────────────────
+const fmtAxis = (val) => {
+  if (val >= 10000000) return `₹${(val / 10000000).toFixed(1)}Cr`;
+  if (val >= 100000) return `₹${(val / 100000).toFixed(1)}L`;
+  if (val >= 1000) return `₹${(val / 1000).toFixed(0)}K`;
+  return `₹${val}`;
+};
+
+// ── Custom bar tooltip ────────────────────────────────────────────────────────
+const BarTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
+  const fmt = (n) =>
+    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
+  return (
+    <div style={{ backgroundColor: '#fff', border: '1px solid #E2E8F0', borderRadius: '10px', padding: '12px 16px', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
+      <p style={{ margin: '0 0 4px', fontWeight: 700, fontSize: '13px', color: '#0F172A' }}>{label}</p>
+      <p style={{ margin: 0, color: '#F59E0B', fontWeight: 600 }}>{fmt(payload[0]?.value)}</p>
+    </div>
+  );
+};
+
+// ── Custom pie tooltip ────────────────────────────────────────────────────────
+const PieTooltip = ({ active, payload }) => {
+  if (!active || !payload?.length) return null;
+  const fmt = (n) =>
+    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
+  return (
+    <div style={{ backgroundColor: '#fff', border: '1px solid #E2E8F0', borderRadius: '10px', padding: '10px 14px', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
+      <p style={{ margin: '0 0 4px', fontWeight: 700, fontSize: '13px', color: '#0F172A' }}>{payload[0]?.name}</p>
+      <p style={{ margin: 0, color: '#6366F1', fontWeight: 600 }}>{fmt(payload[0]?.value)}</p>
+    </div>
+  );
+};
 
 export default function Reports() {
   const [analytics, setAnalytics] = useState(null);
@@ -72,13 +105,8 @@ export default function Reports() {
     }
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
+  const formatCurrency = (amount) =>
+    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount || 0);
 
   if (loading) {
     return (
@@ -88,17 +116,21 @@ export default function Reports() {
     );
   }
 
-  const pieData = analytics?.spendByCategory?.map(item => ({
+  const pieData = analytics?.spendByCategory?.map((item) => ({
     name: item._id || 'Uncategorized',
-    value: item.totalSpend
+    value: item.totalSpend,
   })) || [];
+
+  const totalSpend = pieData.reduce((s, i) => s + i.value, 0);
+  const totalVendors = analytics?.topVendors?.length || 0;
+  const totalOrders = analytics?.topVendors?.reduce((s, v) => s + v.poCount, 0) || 0;
 
   return (
     <div className="page-wrapper">
-      {/* Page Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+      {/* ── Header ── */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
         <div>
-          <h1 style={{ fontSize: '28px', color: 'var(--text-primary)', marginBottom: '4px' }}>Analytics & Reports</h1>
+          <h1 style={{ fontSize: '28px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>Analytics & Reports</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
             Analyze spend analysis, category breakdowns, and export full audit database spreadsheets.
           </p>
@@ -108,63 +140,106 @@ export default function Reports() {
         </Button>
       </div>
 
-      {/* Grid Charts */}
+      {/* ── Summary Stats ── */}
+      <div className="grid-4" style={{ marginBottom: '28px' }}>
+        {[
+          { label: 'Total Spend', value: formatCurrency(totalSpend), icon: DollarSign, color: '#10B981', bg: 'rgba(16,185,129,0.1)' },
+          { label: 'Active Suppliers', value: totalVendors, icon: Users, color: '#6366F1', bg: 'rgba(99,102,241,0.1)' },
+          { label: 'Orders Placed', value: totalOrders, icon: Package, color: '#F59E0B', bg: 'rgba(245,158,11,0.1)' },
+          { label: 'Categories', value: pieData.length, icon: BarChart3, color: '#0F172A', bg: 'rgba(15,23,42,0.07)' },
+        ].map(({ label, value, icon: Icon, color, bg }) => (
+          <Card key={label} style={{ padding: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '6px' }}>{label}</p>
+                <p style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>{value}</p>
+              </div>
+              <div style={{ padding: '10px', borderRadius: '10px', backgroundColor: bg, color }}><Icon size={20} /></div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* ── Charts ── */}
       <div className="grid-2" style={{ marginBottom: '24px' }}>
-        {/* Trend Area Chart */}
+        {/* Bar Chart — Monthly Trend */}
         <Card>
           <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <BarChart3 size={18} /> Monthly Procurement Volume Trend
           </h3>
-          <div style={{ width: '100%', height: '320px' }}>
+          <div style={{ width: '100%', height: '300px' }}>
             {analytics?.monthlyTrend?.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={analytics.monthlyTrend} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                <BarChart
+                  data={analytics.monthlyTrend}
+                  margin={{ top: 10, right: 16, left: 16, bottom: 0 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                  <XAxis dataKey="month" tickLine={false} style={{ fontSize: '12px', fill: 'var(--text-secondary)' }} />
-                  <YAxis tickLine={false} style={{ fontSize: '12px', fill: 'var(--text-secondary)' }} />
-                  <Tooltip 
-                    formatter={(val) => [formatCurrency(val), 'Volume']}
-                    contentStyle={{ backgroundColor: '#FFFFFF', borderRadius: '8px', border: '1px solid var(--border-color)' }}
+                  <XAxis
+                    dataKey="month"
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fontSize: 12, fill: '#64748B' }}
                   />
-                  <Bar dataKey="total" fill="var(--accent-color)" radius={[4, 4, 0, 0]} barSize={32} />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fontSize: 12, fill: '#64748B' }}
+                    tickFormatter={fmtAxis}
+                    width={60}
+                  />
+                  <Tooltip content={<BarTooltip />} cursor={{ fill: 'rgba(245,158,11,0.06)' }} />
+                  <Bar dataKey="total" fill="#F59E0B" radius={[6, 6, 0, 0]} maxBarSize={56} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
-                No spend trend data available.
+              <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', gap: '8px' }}>
+                <BarChart3 size={36} strokeWidth={1} />
+                <p style={{ margin: 0, fontSize: '14px' }}>No trend data yet — complete some POs first.</p>
               </div>
             )}
           </div>
         </Card>
 
-        {/* Pie Category Chart */}
+        {/* Pie Chart — Category Distribution */}
         <Card>
           <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <PieIcon size={18} /> Industry Category Spend Distribution
           </h3>
-          <div style={{ width: '100%', height: '320px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '100%', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {pieData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={pieData}
                     cx="50%"
-                    cy="50%"
-                    innerRadius={70}
-                    outerRadius={90}
-                    paddingAngle={4}
+                    cy="46%"
+                    innerRadius={72}
+                    outerRadius={100}
+                    paddingAngle={3}
                     dataKey="value"
+                    label={({ name, percent }) => percent > 0.05 ? `${(percent * 100).toFixed(0)}%` : ''}
+                    labelLine={false}
                   >
                     {pieData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(val) => formatCurrency(val)} />
-                  <Legend verticalAlign="bottom" height={36} iconType="circle" style={{ fontSize: '12px' }} />
+                  <Tooltip content={<PieTooltip />} />
+                  <Legend
+                    verticalAlign="bottom"
+                    height={40}
+                    iconType="circle"
+                    iconSize={10}
+                    formatter={(value) => <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{value}</span>}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div style={{ color: 'var(--text-secondary)' }}>No category spend data available.</div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
+                <PieIcon size={36} strokeWidth={1} />
+                <p style={{ margin: 0, fontSize: '14px' }}>No category data yet.</p>
+              </div>
             )}
           </div>
         </Card>
