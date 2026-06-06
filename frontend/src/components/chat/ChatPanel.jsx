@@ -2,7 +2,42 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { MessageSquare, X, Send, Trash2, ShieldAlert } from 'lucide-react';
 import Button from '../common/Button.jsx';
-import api from '../../services/api.js';
+import api, { uploadFile } from '../../services/api.js';
+
+const formatMessage = (text) => {
+  if (!text) return '';
+  // Split by bold patterns **bold**
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i} style={{ fontWeight: 700 }}>{part.slice(2, -2)}</strong>;
+    }
+    // Handle inline code `code`
+    const subParts = part.split(/(`.*?`)/g);
+    return subParts.map((subPart, j) => {
+      if (subPart.startsWith('`') && subPart.endsWith('`')) {
+        return (
+          <code 
+            key={`${i}-${j}`} 
+            style={{ 
+              backgroundColor: '#E4E4E7', 
+              color: '#18181B', 
+              padding: '2px 6px', 
+              borderRadius: '4px', 
+              fontFamily: 'monospace', 
+              fontSize: '11px',
+              fontWeight: 600,
+              border: '1px solid #E4E4E7'
+            }}
+          >
+            {subPart.slice(1, -1)}
+          </code>
+        );
+      }
+      return subPart;
+    });
+  });
+};
 
 export default function ChatPanel() {
   const { user, isAuthenticated } = useSelector((state) => state.auth);
@@ -206,7 +241,7 @@ export default function ChatPanel() {
                 whiteSpace: 'pre-wrap'
               }}
             >
-              {msg.content}
+              {formatMessage(msg.content)}
             </div>
           ))}
           {isTyping && (
