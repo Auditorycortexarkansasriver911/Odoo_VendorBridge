@@ -24,7 +24,7 @@ console.log('----------------------------------------');
 
 export default {
   app: {
-    port: process.env.PORT || 5000,
+    port: process.env.PORT || 3000,
     nodeEnv: process.env.NODE_ENV || process.env.NODE_ENVIRONMENT || 'development',
     clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
   },
@@ -46,7 +46,7 @@ export default {
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackUrl: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5000/api/auth/google/callback',
+    callbackUrl: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3000/api/auth/google/callback',
   },
   imagekit: {
     publicKey: process.env.IK_PUBLIC_KEY || 'developer-placeholder-public-key',
